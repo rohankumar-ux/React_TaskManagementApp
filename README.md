@@ -1,21 +1,19 @@
 # React Task Manager
 
-A modern task management application built with React and Vite, featuring a clean dashboard interface for managing tasks and notifications.
+A modern task management application built with React and Vite, featuring a clean dashboard interface for managing tasks.
 
 ## Features
 
 - **Dashboard**: View task overview and statistics
 - **Task Management**: Create, view, and manage tasks
-- **Notifications**: Real-time notification system with snackbar alerts
-- **Responsive Design**: Built with Tailwind CSS for modern UI
+- **Responsive Design**: Built with Material UI
 - **Fast Development**: Powered by Vite with HMR support
 
 ## Tech Stack
 
 - React + Vite
-- Tailwind CSS
+- Material UI
 - Context API for state management
-- ESLint for code quality
 
 ## Getting Started
 
