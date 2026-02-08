@@ -1,35 +1,157 @@
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Box, Button, Stack } from "@mui/material";
+import {
+  Box,
+  Button,
+  Stack,
+  Card,
+  CardContent,
+  CardActions,
+  CardHeader,
+  Typography,
+  Divider,
+  Chip,
+} from "@mui/material";
 import { useTasks } from "../context/TaskContext";
+import EditTaskModal from "../components/EditTaskModal";
+
+const STATUSES = ["TO_DO", "IN_PROGRESS", "DONE"];
+
+const statusColors = {
+  TO_DO: "default",
+  IN_PROGRESS: "warning",
+  DONE: "success",
+};
 
 export default function TaskDetails() {
   const { id } = useParams();
-  console.log(id);
   const navigate = useNavigate();
   const { tasks, updateTask, deleteTask } = useTasks();
 
-  const task = tasks.find(t => t.id === id);
+  const task = tasks.find(t => String(t.id) === id);
+  const [editOpen, setEditOpen] = useState(false);
+
   if (!task) return null;
 
   return (
-    <Box p={3}>
-      <h2>{task.title}</h2>
-      <p>{task.description}</p>
-      
-      <Stack direction="row" spacing={1}>
-        {["TO_DO", "IN_PROGRESS", "DONE"].map(s => (
-          <Button key={s} onClick={() => updateTask(id, { status: s })}>
-            {s}
-          </Button>
-        ))}
-      </Stack>
+    <Box
+      p={{ xs: 2, sm: 4 }}
+      maxWidth={720}
+      mx="auto"
+    >
+      <Card elevation={3}>
+        <CardHeader
+          title={
+            <Typography variant="h5" fontWeight={600}>
+              {task.title}
+            </Typography>
+          }
+          subheader={
+            <Stack direction="row" spacing={1} mt={1}>
+              <Chip
+                label={task.status.replace("_", " ")}
+                color={statusColors[task.status]}
+                size="small"
+              />
+            </Stack>
+          }
+          action={
+            <Button
+              size="small"
+              variant="outlined"
+              onClick={() => setEditOpen(true)}
+            >
+              Edit
+            </Button>
+          }
+          sx={{ pb: 2 }}
+        />
 
-      <Button color="error" onClick={() => {
-        deleteTask(id);
-        navigate("/tasks");
-      }}>
-        Delete
-      </Button>
+        <Divider />
+
+        <CardContent sx={{ py: 3 }}>
+          <Typography
+            variant="subtitle2"
+            color="text.secondary"
+            gutterBottom
+          >
+            Description
+          </Typography>
+
+          <Typography mb={4}>
+            {task.description || "No description provided."}
+          </Typography>
+
+          <Typography
+            variant="subtitle2"
+            color="text.secondary"
+            gutterBottom
+          >
+            Update Status
+          </Typography>
+
+          <Stack direction="row" spacing={1} flexWrap="wrap">
+            {STATUSES.map(s => (
+              <Button
+                key={s}
+                size="small"
+                variant={task.status === s ? "contained" : "outlined"}
+                sx={{
+                  textTransform: "none",
+                  ...(s === "DONE" && {
+                    bgcolor: "success.main",
+                    color: "success.contrastText",
+                    "&:hover": { bgcolor: "success.dark" },
+                  }),
+                  ...(s === "IN_PROGRESS" && {
+                    borderColor: "warning.main",
+                    color: "warning.main",
+                  }),
+                }}
+                onClick={() => updateTask(id, { status: s })}
+              >
+                {s.replace("_", " ")}
+              </Button>
+
+            ))}
+          </Stack>
+        </CardContent>
+
+        <Divider />
+
+        <CardActions
+          sx={{
+            justifyContent: "space-between",
+            px: 3,
+            py: 2,
+          }}
+        >
+          <Button
+            color="error"
+            variant="outlined"
+            onClick={() => {
+              deleteTask(id);
+              navigate("/tasks");
+            }}
+          >
+            Delete Task
+          </Button>
+
+          <Button
+            variant="contained"
+            onClick={() => navigate("/tasks")}
+          >
+            Back to Tasks
+          </Button>
+        </CardActions>
+      </Card>
+
+      <EditTaskModal
+        open={editOpen}
+        onClose={() => setEditOpen(false)}
+        task={task}
+        onSave={data => updateTask(id, data)}
+      />
     </Box>
   );
 }

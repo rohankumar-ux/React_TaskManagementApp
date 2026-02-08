@@ -1,83 +1,118 @@
-import { useTasks } from '../context/TaskContext';
-import { Button, Card, CardBody, CardHeader } from '@heroui/react';
-import { useNavigate } from 'react-router-dom';
-import StatCard from '../components/StatCard';
-import StatusBadge from '../components/StatusBadge';
+import {
+  Box,
+  Card,
+  CardContent,
+  Grid,
+  Typography,
+  Stack,
+  Button,
+  Divider
+} from "@mui/material";
+import { useTasks } from "../context/TaskContext";
+import TaskCard from "../components/TaskCard";
+import { Link as RouterLink } from "react-router-dom";
 
-const Dashboard = () => {
-  const { getTaskCounts, getTasksByStatus } = useTasks();
-  const navigate = useNavigate();
-  const counts = getTaskCounts();
-  const upcomingTasks = getTasksByStatus('TO_DO').slice(0, 3);
+export default function Dashboard() {
+  const { tasks } = useTasks();
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'short', 
-      day: 'numeric' 
-    });
-  };
+  const countByStatus = (status) =>
+    tasks.filter(t => t.status === status).length;
+
+  const pendingCount = tasks.filter(t =>
+    ["TO_DO", "IN_PROGRESS"].includes(t.status)
+  ).length;
+
+  const upcoming = tasks
+    .slice()
+    .filter(t => t.status !== "DONE")
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, 4);
+
+  const stats = [
+    { label: "Total Tasks", value: tasks.length },
+    { label: "To Do", value: countByStatus("TO_DO") },
+    { label: "In Progress", value: countByStatus("IN_PROGRESS") },
+    { label: "Completed", value: countByStatus("DONE") }
+  ];
 
   return (
-    <div className="max-w-7xl mx-auto p-8">
-      <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
-      
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-        <StatCard title="Total Tasks" count={counts.total} color="default" />
-        <StatCard title="To Do" count={counts.toDo} color="primary" />
-        <StatCard title="In Progress" count={counts.inProgress} color="warning" />
-        <StatCard title="Completed" count={counts.done} color="success" />
-      </div>
+    <Box p={{ xs: 2, md: 4 }} bgcolor="background.default" minHeight="100vh">
 
-      <Card className="shadow-sm">
-        <CardHeader className="flex justify-between items-center px-6 py-4 border-b">
-          <h2 className="text-xl font-semibold">Upcoming Tasks</h2>
-          <Button 
-            size="sm" 
-            color="primary" 
-            variant="flat"
-            onPress={() => navigate('/tasks')}
-          >
-            View All Tasks
-          </Button>
-        </CardHeader>
-        <CardBody className="p-6">
-          {upcomingTasks.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-gray-400 text-lg">No upcoming tasks</p>
-              <Button 
-                color="primary" 
-                className="mt-4"
-                onPress={() => navigate('/tasks')}
-              >
-                Create Your First Task
-              </Button>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {upcomingTasks.map(task => (
-                <div 
-                  key={task.id} 
-                  className="p-5 border rounded-lg hover:shadow-md transition-shadow cursor-pointer bg-white"
-                  onClick={() => navigate(`/tasks/${task.id}`)}
+      <Stack spacing={1} mb={4}>
+        <Typography variant="h4" fontWeight={600}>
+          Welcome back 👋
+        </Typography>
+        <Typography variant="subtitle1" color="text.secondary">
+          You have <strong>{pendingCount}</strong> tasks pending
+        </Typography>
+      </Stack>
+
+      <Grid container spacing={2} mb={4}>
+        {stats.map((card) => (
+          <Grid item md={3} key={card.label}>
+            <Card
+              elevation={2}
+              sx={{
+                borderRadius: 2,
+                border: "1px solid",
+                borderColor: "divider",
+                textAlign: "center",
+                transition: "0.2s",
+                "&:hover": {
+                  boxShadow: 3,
+                  transform: "translateY(-2px)"
+                }
+              }}
+            >
+              <CardContent>
+                <Typography
+                  variant="subtitle2"
+                  color="text.secondary"
+                  gutterBottom
                 >
-                  <div className="flex justify-between items-start mb-3">
-                    <h3 className="font-semibold text-lg">{task.title}</h3>
-                    <StatusBadge status={task.status} />
-                  </div>
-                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                    {task.description || 'No description'}
-                  </p>
-                  <p className="text-xs text-gray-400">Created: {formatDate(task.createdAt)}</p>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardBody>
-      </Card>
-    </div>
-  );
-};
+                  {card.label}
+                </Typography>
+                <Typography variant="h4" fontWeight={600}>
+                  {card.value}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
 
-export default Dashboard;
+      <Stack spacing={1} mb={2}>
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="flex-end"
+        >
+          <Typography variant="h6" fontWeight={600}>
+            Upcoming Tasks
+          </Typography>
+
+          <Button color="primary" component={RouterLink}
+            to="/tasks" >View All Tasks →</Button>
+        </Stack>
+
+        <Divider />
+      </Stack>
+
+      <Stack spacing={2}>
+        {upcoming.length > 0 ? (
+          upcoming.map(task => (
+            <TaskCard
+              key={`up-${task.id}`}
+              task={task}
+              showActions={false}
+            />
+          ))
+        ) : (
+          <Typography color="text.secondary">
+            No upcoming tasks 🎉
+          </Typography>
+        )}
+      </Stack>
+    </Box>
+  );
+}

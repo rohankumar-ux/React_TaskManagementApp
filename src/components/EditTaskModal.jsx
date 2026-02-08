@@ -1,37 +1,25 @@
-import { Box, Button, TextField, Stack } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { useTasks } from "../context/TaskContext";
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Box, TextField, Stack } from "@mui/material";
 import { useState, useEffect } from "react";
 
-export default function TaskForm({ task, onSave, showNavigate = true }) {
-  const { addTask } = useTasks();
-  const navigate = useNavigate();
+export default function EditTaskModal({ open, onClose, task, onSave }) {
   const [form, setForm] = useState({ title: "", description: "" });
 
   useEffect(() => {
     if (task) {
       setForm({ title: task.title, description: task.description || "" });
     }
-  }, [task]);
+  }, [task, open]);
 
-  const handleSubmit = () => {
+  const handleSave = () => {
     const data = { title: form.title, description: form.description };
-
-    if (onSave) {
-      onSave(data);
-    } else {
-      addTask({
-        ...data,
-        status: "TO_DO",
-        createdAt: new Date().toISOString().split("T")[0]
-      });
-      if (showNavigate) navigate("/tasks");
-    }
+    onSave(data);
+    onClose();
   };
 
   return (
-    <Box p={3}>
-      <form onSubmit={handleSubmit}>
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+      <DialogTitle>Edit Task</DialogTitle>
+      <DialogContent sx={{ pt: 3 }}>
         <Stack spacing={2}>
           <TextField
             label="Title"
@@ -49,11 +37,14 @@ export default function TaskForm({ task, onSave, showNavigate = true }) {
             rows={4}
             fullWidth
           />
-          <Button type="submit" variant="contained">
-            {task ? "Save" : "Create"}
-          </Button>
         </Stack>
-      </form>
-    </Box>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={handleSave} variant="contained">
+          Save
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 }
