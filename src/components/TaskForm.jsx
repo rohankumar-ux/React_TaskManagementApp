@@ -14,10 +14,21 @@ export default function TaskForm({ task, onSave, showNavigate = true }) {
     }
   }, [task]);
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    if (!form.title.trim()) {
+      return;
+    }
+
     const data = { title: form.title, description: form.description };
 
     if (onSave) {
+      addTask({
+        ...data,
+        status: "TO_DO",
+        createdAt: new Date().toISOString().split("T")[0]
+      });
       onSave(data);
     } else {
       addTask({

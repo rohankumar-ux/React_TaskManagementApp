@@ -8,6 +8,10 @@ import {
 import TaskForm from "./TaskForm";
 
 export default function NewTaskModal({ open, onClose }) {
+  const handleSave = (data) => {
+    onClose();
+  };
+
   return (
     <Dialog
       open={open}
@@ -18,7 +22,7 @@ export default function NewTaskModal({ open, onClose }) {
       <DialogTitle>Create New Task</DialogTitle>
 
       <DialogContent dividers>
-        <TaskForm />
+        <TaskForm onSave={handleSave} showNavigate={false} />
       </DialogContent>
 
       <DialogActions>
