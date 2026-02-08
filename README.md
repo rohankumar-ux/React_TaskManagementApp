@@ -1,16 +1,28 @@
-# React + Vite
+# Task Management App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern task management application built with React and Vite.
 
-Currently, two official plugins are available:
+## Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+This project is a web-based task management system that helps users create, organize, and track tasks efficiently. It features a clean, intuitive interface for managing tasks with various statuses.
 
-## React Compiler
+## Key Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Task Dashboard** - View and manage all tasks at a glance
+- **Create & Edit Tasks** - Add new tasks or update existing ones
+- **Task Details** - View comprehensive information for each task
+- **Status Management** - Track tasks by status with visual indicators
+- **Modal Interfaces** - Intuitive modal dialogs for creating and editing tasks
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- **React** - UI library
+- **Vite** - Fast build tool and dev server
+- **Context API** - State management for task data
+- **CSS** - Styling and responsive design
+
+## Getting Started
+
+1. Install dependencies: `npm install`
+2. Start the development server: `npm run dev`
+3. Build for production: `npm run build`
