@@ -12,6 +12,7 @@ import {
   Divider,
   Chip,
 } from "@mui/material";
+import DeleteConfirmDialog from "../components/DeleteConfirmDialog";
 import { useTasks } from "../context/TaskContext";
 import EditTaskModal from "../components/EditTaskModal";
 
@@ -30,6 +31,7 @@ export default function TaskDetails() {
 
   const task = tasks.find(t => String(t.id) === id);
   const [editOpen, setEditOpen] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
   if (!task) return null;
 
@@ -129,10 +131,7 @@ export default function TaskDetails() {
           <Button
             color="error"
             variant="outlined"
-            onClick={() => {
-              deleteTask(id);
-              navigate("/tasks");
-            }}
+            onClick={() => setDeleteConfirmOpen(true)}
           >
             Delete Task
           </Button>
@@ -151,6 +150,18 @@ export default function TaskDetails() {
         onClose={() => setEditOpen(false)}
         task={task}
         onSave={data => updateTask(id, data)}
+      />
+
+      <DeleteConfirmDialog
+        open={deleteConfirmOpen}
+        title={`Delete "${task.title}"?`}
+        description={`Are you sure you want to delete "${task.title}"? This action cannot be undone.`}
+        onClose={() => setDeleteConfirmOpen(false)}
+        onConfirm={() => {
+          deleteTask(id);
+          setDeleteConfirmOpen(false);
+          navigate("/tasks");
+        }}
       />
     </Box>
   );
