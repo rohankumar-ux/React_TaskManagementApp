@@ -10,7 +10,7 @@ import {
 import { useState } from "react";
 import { useTasks } from "../context/TaskContext";
 import TaskCard from "../components/TaskCard";
-import NewTaskModal from "../components/NewTaskModal";
+import TaskModal from "../components/TaskModal";
 
 const FILTERS = [
   { value: "ALL", label: "All" },
@@ -104,7 +104,7 @@ export default function Tasks() {
         )}
       </Stack>
 
-      <NewTaskModal
+      <TaskModal
         open={open}
         onClose={() => setOpen(false)}
       />

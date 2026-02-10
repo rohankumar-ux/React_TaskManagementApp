@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import DeleteConfirmDialog from "../components/DeleteConfirmDialog";
 import { useTasks } from "../context/TaskContext";
-import EditTaskModal from "../components/EditTaskModal";
+import TaskModal from "../components/TaskModal";
 
 const STATUSES = ["TO_DO", "IN_PROGRESS", "DONE"];
 
@@ -145,7 +145,7 @@ export default function TaskDetails() {
         </CardActions>
       </Card>
 
-      <EditTaskModal
+      <TaskModal
         open={editOpen}
         onClose={() => setEditOpen(false)}
         task={task}

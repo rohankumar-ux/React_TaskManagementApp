@@ -17,7 +17,6 @@ const Navigation = () => {
   const isActive = (path) => location.pathname === path;
 
   const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
 
   return (
     <AppBar position="static" color="default" elevation={0}>
@@ -56,7 +55,7 @@ const Navigation = () => {
 
         <Menu
           anchorEl={anchorEl}
-          open={open}
+          open={Boolean(anchorEl)}
           onClose={() => setAnchorEl(null)}
         >
           <MenuItem disabled>admin@taskflow.com</MenuItem>

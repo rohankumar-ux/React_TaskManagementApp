@@ -3,45 +3,68 @@ import { useNavigate } from "react-router-dom";
 import { useTasks } from "../context/TaskContext";
 import { useState, useEffect } from "react";
 
-export default function TaskForm({ task, onSave, showNavigate = true }) {
-  const { addTask } = useTasks();
+export default function TaskForm({ 
+  task, 
+  onSave, 
+  showNavigate = true,
+  showSubmitButton = true 
+}) {
+  const { addTask, updateTask } = useTasks();
   const navigate = useNavigate();
   const [form, setForm] = useState({ title: "", description: "" });
 
+  const isEditing = task != null;
+
   useEffect(() => {
     if (task) {
-      setForm({ title: task.title, description: task.description || "" });
+      setForm({ 
+        title: task.title || "", 
+        description: task.description || "" 
+      });
+    } else {
+      setForm({ title: "", description: "" });
     }
   }, [task]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = () => {
     
     if (!form.title.trim()) {
       return;
     }
 
-    const data = { title: form.title, description: form.description };
+    const data = { 
+      title: form.title.trim(), 
+      description: form.description.trim() 
+    };
 
-    if (onSave) {
-      addTask({
-        ...data,
-        status: "TO_DO",
-        createdAt: new Date().toISOString().split("T")[0]
+    if (isEditing) {
+      updateTask({
+        ...task,
+        ...data
       });
-      onSave(data);
     } else {
       addTask({
         ...data,
         status: "TO_DO",
         createdAt: new Date().toISOString().split("T")[0]
       });
-      if (showNavigate) navigate("/tasks");
+    }
+
+    if (onSave) {
+      onSave(data);
+    }
+
+    if (showNavigate && !onSave) {
+      navigate("/tasks");
+    }
+
+    if (!isEditing && !onSave) {
+      setForm({ title: "", description: "" });
     }
   };
 
   return (
-    <Box p={3}>
+    <Box p={showSubmitButton ? 0 : 3}>
       <form onSubmit={handleSubmit}>
         <Stack spacing={2}>
           <TextField
@@ -60,9 +83,11 @@ export default function TaskForm({ task, onSave, showNavigate = true }) {
             rows={4}
             fullWidth
           />
-          <Button type="submit" variant="contained">
-            {task ? "Save" : "Create"}
-          </Button>
+          {showSubmitButton && (
+            <Button type="submit" variant="contained" fullWidth>
+              {isEditing ? "Save Changes" : "Create Task"}
+            </Button>
+          )}
         </Stack>
       </form>
     </Box>
