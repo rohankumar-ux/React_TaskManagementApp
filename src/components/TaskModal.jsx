@@ -1,8 +1,8 @@
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/material";
+import { Dialog, DialogTitle, DialogContent } from "@mui/material";
 import TaskForm from "./TaskForm";
 
 export default function TaskModal({ open, onClose, task, onSave }) {
-  const isEditing = task != null;
+  const isEditing = !!task;
 
   const handleSave = (data) => {
     if (onSave) {
@@ -17,14 +17,10 @@ export default function TaskModal({ open, onClose, task, onSave }) {
       <DialogContent dividers sx={{ pt: 2 }}>
         <TaskForm 
           task={task} 
-          onSave={handleSave} 
+          onSave={handleSave}
           showNavigate={false}
-          showSubmitButton={true}
         />
       </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-      </DialogActions>
     </Dialog>
   );
 }

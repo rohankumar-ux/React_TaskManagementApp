@@ -6,14 +6,13 @@ import { useState, useEffect } from "react";
 export default function TaskForm({ 
   task, 
   onSave, 
-  showNavigate = true,
-  showSubmitButton = true 
+  showNavigate = true
 }) {
   const { addTask, updateTask } = useTasks();
   const navigate = useNavigate();
   const [form, setForm] = useState({ title: "", description: "" });
 
-  const isEditing = task != null;
+  const isEditing = !!task;
 
   useEffect(() => {
     if (task) {
@@ -26,7 +25,8 @@ export default function TaskForm({
     }
   }, [task]);
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
     
     if (!form.title.trim()) {
       return;
@@ -38,10 +38,12 @@ export default function TaskForm({
     };
 
     if (isEditing) {
-      updateTask({
-        ...task,
-        ...data
-      });
+      if (updateTask) {
+        updateTask({
+          ...task,
+          ...data
+        });
+      }
     } else {
       addTask({
         ...data,
@@ -54,7 +56,7 @@ export default function TaskForm({
       onSave(data);
     }
 
-    if (showNavigate && !onSave) {
+    if (showNavigate) {
       navigate("/tasks");
     }
 
@@ -64,32 +66,28 @@ export default function TaskForm({
   };
 
   return (
-    <Box p={showSubmitButton ? 0 : 3}>
-      <form onSubmit={handleSubmit}>
-        <Stack spacing={2}>
-          <TextField
-            label="Title"
-            value={form.title}
-            onChange={e => setForm({ ...form, title: e.target.value })}
-            fullWidth
-            required
-            autoFocus
-          />
-          <TextField
-            label="Description"
-            value={form.description}
-            onChange={e => setForm({ ...form, description: e.target.value })}
-            multiline
-            rows={4}
-            fullWidth
-          />
-          {showSubmitButton && (
-            <Button type="submit" variant="contained" fullWidth>
-              {isEditing ? "Save Changes" : "Create Task"}
-            </Button>
-          )}
-        </Stack>
-      </form>
+    <Box component="form" onSubmit={handleSubmit} sx={{ p: showNavigate ? 3 : 0 }}>
+      <Stack spacing={2}>
+        <TextField
+          label="Title"
+          value={form.title}
+          onChange={e => setForm({ ...form, title: e.target.value })}
+          fullWidth
+          required
+          autoFocus
+        />
+        <TextField
+          label="Description"
+          value={form.description}
+          onChange={e => setForm({ ...form, description: e.target.value })}
+          multiline
+          rows={4}
+          fullWidth
+        />
+        <Button type="submit" variant="contained" fullWidth>
+          {isEditing ? "Save Changes" : "Create Task"}
+        </Button>
+      </Stack>
     </Box>
   );
 }
