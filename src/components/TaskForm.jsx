@@ -26,24 +26,16 @@ export default function TaskForm({
   }, [task]);
 
   const handleSubmit = (e) => {
+
     e.preventDefault();
     
-    if (!form.title.trim()) {
-      return;
-    }
-
     const data = { 
       title: form.title.trim(), 
       description: form.description.trim() 
     };
 
     if (isEditing) {
-      if (updateTask) {
-        updateTask({
-          ...task,
-          ...data
-        });
-      }
+      updateTask(task.id, data);
     } else {
       addTask({
         ...data,
