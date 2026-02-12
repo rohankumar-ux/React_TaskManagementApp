@@ -5,9 +5,7 @@ export default function TaskModal({ open, onClose, task, onSave }) {
   const isEditing = !!task;
 
   const handleSave = (data) => {
-    if (onSave) {
-      onSave(data);
-    }
+    onSave?.(data);
     onClose();
   };
 
@@ -15,8 +13,8 @@ export default function TaskModal({ open, onClose, task, onSave }) {
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle>{isEditing ? "Edit Task" : "Create New Task"}</DialogTitle>
       <DialogContent dividers sx={{ pt: 2 }}>
-        <TaskForm 
-          task={task} 
+        <TaskForm
+          task={task}
           onSave={handleSave}
           showNavigate={false}
         />

@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { useTasks } from "../context/TaskContext";
 import { useState, useEffect } from "react";
 
-export default function TaskForm({ 
-  task, 
-  onSave, 
+export default function TaskForm({
+  task,
+  onSave,
   showNavigate = true
 }) {
   const { addTask, updateTask } = useTasks();
@@ -15,46 +15,50 @@ export default function TaskForm({
   const isEditing = !!task;
 
   useEffect(() => {
-    if (task) {
-      setForm({ 
-        title: task.title || "", 
-        description: task.description || "" 
-      });
-    } else {
+    setForm({
+      title: task?.title || "",
+      description: task?.description || ""
+    });
+  }, [task]);
+
+  const saveTask = (data) => {
+    if (isEditing) {
+      updateTask(task.id, data);
+      return;
+    }
+
+    addTask({
+      ...data,
+      status: "TO_DO",
+      createdAt: new Date().toISOString().split("T")[0]
+    });
+  };
+
+  const afterSave = (data) => {
+    onSave?.(data);
+
+    if (showNavigate) {
+      navigate("/tasks");
+      return;
+    }
+
+    if (!isEditing) {
       setForm({ title: "", description: "" });
     }
-  }, [task]);
+  };
+
 
   const handleSubmit = (e) => {
 
     e.preventDefault();
-    
-    const data = { 
-      title: form.title.trim(), 
-      description: form.description.trim() 
+
+    const data = {
+      title: form.title.trim(),
+      description: form.description.trim()
     };
 
-    if (isEditing) {
-      updateTask(task.id, data);
-    } else {
-      addTask({
-        ...data,
-        status: "TO_DO",
-        createdAt: new Date().toISOString().split("T")[0]
-      });
-    }
-
-    if (onSave) {
-      onSave(data);
-    }
-
-    if (showNavigate) {
-      navigate("/tasks");
-    }
-
-    if (!isEditing && !onSave) {
-      setForm({ title: "", description: "" });
-    }
+    saveTask(data);
+    afterSave(data);
   };
 
   return (
